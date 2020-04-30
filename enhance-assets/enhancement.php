@@ -33,6 +33,31 @@ abstract class EnhanceAssets_Enhancement {
 	}
 
 	/**
+	 * Get asset's source URL.
+	 *
+	 * @uses EnhanceAssets::get_asset()
+	 * @uses wp_scripts()
+	 * @uses wp_styles()
+	 * @see WP_Dependencies::do_item()
+	 * @return string
+	 */
+	protected function get_asset_src() {
+		$asset = EnhanceAssets::get_asset( $this->handle, $this->is_script );
+
+		$src = $asset->src;
+		$object = $this->is_script ? wp_scripts() : wp_styles();
+		$ver = '';
+
+		if ( null !== $asset->ver )
+			$ver = $asset->ver ? $asset->ver : $object->default_version;
+
+		if ( isset( $object->args[ $this->handle ] ) )
+			$ver = $ver ? $ver . '&amp;' . $object->args[ $this->handle ] : $object->args[ $this->handle ];
+
+		return add_query_arg( 'ver', $ver, $src );
+	}
+
+	/**
 	 * Add enhancement to tag.
 	 *
 	 * @param mixed $tag

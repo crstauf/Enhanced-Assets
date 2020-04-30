@@ -3,6 +3,7 @@
  * Manager for enhancements.
  *
  * @todo add "nonce" enhancement
+ * @todo create static function to add enhancement
  */
 
 defined( 'ABSPATH' ) || die();
@@ -21,6 +22,10 @@ class EnhanceAssets_Enhancements {
 		 'async' => 'EnhanceAssets_AsyncEnhancement',
 		 'defer' => 'EnhanceAssets_DeferEnhancement',
 		'inline' => 'EnhanceAssets_InlineEnhancement',
+		'dns-prefetch' => 'EnhanceAssets_DNSPrefetchEnhancement',
+		'preconnect' => 'EnhanceAssets_PreconnectEnhancement',
+		'prefetch' => 'EnhanceAssets_PrefetchEnhancement',
+		'preload' => 'EnhanceAssets_PreloadEnhancement',
 	);
 
 	/**

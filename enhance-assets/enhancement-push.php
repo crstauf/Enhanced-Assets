@@ -1,6 +1,6 @@
 <?php
 /**
- * Enhancement: HTTP2 server push.
+ * Enhancement: HTTP2 server push (key: "push").
  */
 
 defined( 'ABSPATH' ) || die();
@@ -26,8 +26,12 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 	function __construct( string $handle, bool $is_script, array $args = array() ) {
 		parent::__construct( $handle, $is_script, $args );
 
-		if ( !did_action( 'send_headers' ) )
-			add_action( 'send_headers', array( $this, 'action__send_headers' ) );
+		if ( did_action( 'send_headers' ) ) {
+			trigger_error( sprintf( 'Too late to apply <code>%s</code> enhancement to <code>%s</code> %s.', __CLASS__, $handle, $is_script ? 'script' : 'stylesheet' ) );
+			return;
+		}
+
+		add_action( 'send_headers', array( $this, 'action__send_headers' ) );
 	}
 
 	/**
@@ -48,17 +52,7 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 		if ( !isset( $asset->extra['enhancements']['push'] ) )
 			return;
 
-		$src = $asset->src;
-		$object = $this->is_script ? wp_scripts() : wp_styles();
-		$ver = '';
-
-		if ( null !== $asset->ver )
-			$ver = $asset->ver ? $asset->ver : $object->default_version;
-
-		if ( isset( $object->args[ $this->handle ] ) )
-			$ver = $ver ? $ver . '&amp;' . $object->args[ $this->handle ] : $object->args[ $this->handle ];
-
-		$src = add_query_arg( 'ver', $ver, $src );
+		$src = $this->get_asset_src();
 
 		header( sprintf( 'Link: <%s>; rel=preload; as=%s', $src, $this->is_script ? 'script' : 'style' ), false );
 		$this->pushed = true;

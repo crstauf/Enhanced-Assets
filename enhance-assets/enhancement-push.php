@@ -10,6 +10,8 @@ defined( 'ABSPATH' ) || die();
  */
 class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 
+	const KEY = 'push';
+
 	/**
 	 * @var bool $pushed Indicate if header was set.
 	 */
@@ -27,7 +29,7 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 		parent::__construct( $handle, $is_script, $args );
 
 		if ( did_action( 'send_headers' ) ) {
-			trigger_error( sprintf( 'Too late to apply <code>%s</code> enhancement to <code>%s</code> %s.', __CLASS__, $handle, $is_script ? 'script' : 'stylesheet' ) );
+			trigger_error( sprintf( 'Too late to apply <code>%s</code> enhancement to <code>%s</code> %s.', static::KEY, $handle, $is_script ? 'script' : 'stylesheet' ) );
 			return;
 		}
 
@@ -49,7 +51,7 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 		$asset = EnhanceAssets::get_asset( $this->handle, $this->is_script );
 
 		# Confirm enhancement is still set.
-		if ( !isset( $asset->extra['enhancements']['push'] ) )
+		if ( !isset( $asset->extra['enhancements'][static::KEY] ) )
 			return;
 
 		$src = $this->get_asset_src();
@@ -73,3 +75,7 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 	}
 
 }
+
+EnhanceAssets_Enhancements::add( EnhanceAssets_PushEnhancement::KEY, EnhanceAssets_PushEnhancement::class );
+
+?>

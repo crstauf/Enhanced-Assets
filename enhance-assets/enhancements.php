@@ -17,16 +17,22 @@ class EnhanceAssets_Enhancements {
 	 * @var array Built-in enhancements.
 	 * array( 'key' => 'class_name' )
 	 */
-	protected static $native_enhancements = array(
-		  'push' => 'EnhanceAssets_PushEnhancement',
-		 'async' => 'EnhanceAssets_AsyncEnhancement',
-		 'defer' => 'EnhanceAssets_DeferEnhancement',
-		'inline' => 'EnhanceAssets_InlineEnhancement',
-		'dns-prefetch' => 'EnhanceAssets_DNSPrefetchEnhancement',
-		'preconnect' => 'EnhanceAssets_PreconnectEnhancement',
-		'prefetch' => 'EnhanceAssets_PrefetchEnhancement',
-		'preload' => 'EnhanceAssets_PreloadEnhancement',
-	);
+	protected static $enhancements = array();
+
+	/**
+	 * Add enhancement.
+	 *
+	 * @param string $key
+	 * @param string $class_name
+	 */
+	static function add( string $key, string $class_name ) {
+		if ( isset( static::$enhancements[$key] ) ) {
+			trigger_error( sprintf( 'Enhancement <code>%s</code> already exists.', $key ) );
+			return;
+		}
+
+		static::$enhancements[$key] = $class_name;
+	}
 
 	/**
 	 * Get enhancement class name(s).
@@ -64,7 +70,7 @@ class EnhanceAssets_Enhancements {
 	 * @return array
 	 */
 	protected static function _get() {
-		$enhancements = ( array ) apply_filters( 'enhance_assets/enhancements', static::$native_enhancements );
+		$enhancements = ( array ) apply_filters( 'enhance_assets/enhancements', static::$enhancements );
 
 		$enhancements = array_filter( $enhancements, function( string $enhancement ) {
 			if ( !class_exists( $enhancement ) )

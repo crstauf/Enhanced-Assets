@@ -19,6 +19,8 @@ abstract class EnhanceAssets_Enhancement {
 	protected $is_script;
 	public $args;
 
+	protected $default_args = array();
+
 	/**
 	 * Construct.
 	 *
@@ -29,7 +31,7 @@ abstract class EnhanceAssets_Enhancement {
 	function __construct( string $handle, bool $is_script, array $args = array() ) {
 		$this->handle = $handle;
 		$this->is_script = $is_script;
-		$this->args = $args;
+		$this->args = wp_parse_args( $args, $this->default_args );
 	}
 
 	/**
@@ -41,7 +43,7 @@ abstract class EnhanceAssets_Enhancement {
 	 * @see WP_Dependencies::do_item()
 	 * @return string
 	 */
-	protected function get_asset_src() {
+	protected function get_asset_url() {
 		$asset = EnhanceAssets::get_asset( $this->handle, $this->is_script );
 
 		$src = $asset->src;
@@ -55,6 +57,10 @@ abstract class EnhanceAssets_Enhancement {
 			$ver = $ver ? $ver . '&amp;' . $object->args[ $this->handle ] : $object->args[ $this->handle ];
 
 		return add_query_arg( 'ver', $ver, $src );
+	}
+
+	protected function get_asset_src() {
+		return $this->get_asset_url();
 	}
 
 	/**

@@ -10,6 +10,8 @@ defined( 'ABSPATH' ) || die();
  */
 class EnhanceAssets_DeferEnhancement extends EnhanceAssets_Enhancement {
 
+	const KEY = 'defer';
+
 	/**
 	 * Add "defer" attribute to tag.
 	 *
@@ -24,5 +26,7 @@ class EnhanceAssets_DeferEnhancement extends EnhanceAssets_Enhancement {
 	}
 
 }
+
+EnhanceAssets_Enhancements::add( EnhanceAssets_DeferEnhancement::KEY, EnhanceAssets_DeferEnhancement::class );
 
 ?>

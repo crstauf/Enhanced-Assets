@@ -10,6 +10,8 @@ defined( 'ABSPATH' ) || die();
  */
 class EnhanceAssets_PrefetchEnhancement extends EnhanceAssets_Enhancement {
 
+	const KEY = 'prefetch';
+
 	/**
 	 * Construct.
 	 *
@@ -63,5 +65,7 @@ class EnhanceAssets_PrefetchEnhancement extends EnhanceAssets_Enhancement {
 	}
 
 }
+
+EnhanceAssets_Enhancements::add( EnhanceAssets_PrefetchEnhancement::KEY, EnhanceAssets_PrefetchEnhancement::class );
 
 ?>

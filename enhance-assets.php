@@ -146,6 +146,7 @@ final class EnhanceAssets {
 		require_once 'enhance-assets/enhancement-async.php';
 		require_once 'enhance-assets/enhancement-defer.php';
 		require_once 'enhance-assets/enhancement-inline.php';
+		require_once 'enhance-assets/enhancement-preconnect.php';
 		require_once 'enhance-assets/enhancement-push.php';
 	}
 

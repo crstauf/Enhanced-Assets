@@ -10,6 +10,8 @@ defined( 'ABSPATH' ) || die();
  */
 class EnhanceAssets_AsyncEnhancement extends EnhanceAssets_Enhancement {
 
+	const KEY = 'async';
+
 	/**
 	 * Add "async" attribute to tag.
 	 *
@@ -24,5 +26,7 @@ class EnhanceAssets_AsyncEnhancement extends EnhanceAssets_Enhancement {
 	}
 
 }
+
+EnhanceAssets_Enhancements::add( EnhanceAssets_AsyncEnhancement::KEY, EnhanceAssets_AsyncEnhancement::class );
 
 ?>

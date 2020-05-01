@@ -10,6 +10,8 @@ defined( 'ABSPATH' ) || die();
  */
 class EnhanceAssets_InlineEnhancement extends EnhanceAssets_Enhancement {
 
+	const KEY = 'inline';
+
 	/**
 	 * @var null|string Path of asset's file.
 	 */
@@ -74,5 +76,7 @@ class EnhanceAssets_InlineEnhancement extends EnhanceAssets_Enhancement {
 	}
 
 }
+
+EnhanceAssets_Enhancements::add( EnhanceAssets_InlineEnhancement::KEY, EnhanceAssets_InlineEnhancement::class );
 
 ?>

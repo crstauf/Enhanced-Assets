@@ -70,7 +70,7 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 	 * @param string $tag
 	 * @return string
 	 */
-	protected function _enhance( $tag ) {
+	protected function _enhance( string $tag ) {
 		if ( !$this->pushed )
 			return $tag;
 

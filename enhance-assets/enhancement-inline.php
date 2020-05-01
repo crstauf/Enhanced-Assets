@@ -40,7 +40,7 @@ class EnhanceAssets_InlineEnhancement extends EnhanceAssets_Enhancement {
 	 * @uses $this->get_contents()
 	 * @return string
 	 */
-	function _enhance( $tag ) {
+	function _enhance( string $tag ) {
 		$this->determine_path();
 
 		if ( empty( $this->path ) )

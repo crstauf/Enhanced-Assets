@@ -35,6 +35,20 @@ abstract class EnhanceAssets_Enhancement {
 	}
 
 	/**
+	 * Check asset status.
+	 *
+	 * @param string $status
+	 * @uses wp_script_is()
+	 * @uses wp_style_is()
+	 * @return bool
+	 */
+	protected is_asset_enqueued( string $status = 'enqueued' ) {
+		return $this->is_script
+			? wp_script_is( $this->handle, $status )
+			: wp_style_is(  $this->handle, $status );
+	}
+
+	/**
 	 * Get asset's source URL.
 	 *
 	 * @uses EnhanceAssets::get_asset()
@@ -59,6 +73,11 @@ abstract class EnhanceAssets_Enhancement {
 		return add_query_arg( 'ver', $ver, $src );
 	}
 
+	/**
+	 * Alias for get_asset_url().
+	 *
+	 * @uses $this->get_asset_url()
+	 */
 	protected function get_asset_src() {
 		return $this->get_asset_url();
 	}

@@ -34,11 +34,11 @@ final class EnhanceAssets {
 	 *
 	 * @param string $handle
 	 * @param bool $is_script
-	 * @uses wp_is_script()
-	 * @uses wp_is_style()
+	 * @uses wp_script_is()
+	 * @uses wp_style_is()
 	 * @uses wp_scripts()
 	 * @uses wp_styles()
-	 * @return _WP_Dependency
+	 * @return false|_WP_Dependency
 	 */
 	static function get_asset( string $handle, bool $is_script = true ) {
 		$function_name = $is_script ? 'wp_script_is' : 'wp_style_is';
@@ -102,7 +102,7 @@ final class EnhanceAssets {
 
 		if ( empty( $object ) ) {
 			trigger_error( sprintf( '<code>%s</code> is not a registered %s.', $handle, $is_script ? 'script' : 'stylesheet' ) );
-			return;
+			return false;
 		}
 
 		if ( !isset( $object->extra['enhancements'] ) )
@@ -110,17 +110,18 @@ final class EnhanceAssets {
 
 		if ( has_action( 'enhance_assets/enhancement_' . $enhancement . '_pre' ) ) {
 			do_action( 'enhance_assets/enhancement_' . $enhancement . '_pre', array( $handle, $is_script, $args ) );
-			return;
+			return false;
 		}
 
 		$enhancement_class = EnhanceAssets_Enhancements::get( $enhancement );
 
 		if ( empty( $enhancement_class ) ) {
 			trigger_error( sprintf( 'Enhancement <code>%s</code> is not available.', $enhancement ) );
-			return;
+			return false;
 		}
 
 		$object->extra['enhancements'][$enhancement] = new $enhancement_class( $handle, $is_script, $args );
+		return true;
 	}
 
 	/**
@@ -147,7 +148,8 @@ final class EnhanceAssets {
 		require_once 'enhance-assets/enhancement-defer.php';
 		require_once 'enhance-assets/enhancement-inline.php';
 		require_once 'enhance-assets/enhancement-preconnect.php';
-		require_once 'enhance-assets/enhancement-push.php';
+		require_once 'enhance-assets/enhancement-prefetch.php';
+		require_once 'enhance-assets/enhancement-preload.php';
 	}
 
 	/**
@@ -156,35 +158,34 @@ final class EnhanceAssets {
 	 * Magically handle 'critical' enhancement.
 	 *
 	 * @param array $params
-	 * @uses EnhanceAssets_Enhancement::get()
-	 * @uses static::get_asset()
+	 * @uses static::enhance()
+	 *
+	 * @todo test
 	 */
 	function action__self__enhancement_critical_pre( $params ) {
 		list( $handle, $is_script, $args ) = $params;
 
-		$enhancements = array();
-
-		if ( !did_action( 'send_headers' ) )
-			$enhancements[] = 'push';
-
-		$enhancements[] = 'inline';
+		$enhancements = array(
+			'preload',
+			'inline',
+		);
 
 		$enhancements = ( array ) apply_filters( 'enhance_assets/critical_enhancements', $enhancements );
-		$enhancements = EnhanceAssets_Enhancements::get( $enhancements );
 
-		if ( empty( $enhancements ) ) {
-			trigger_error( sprintf( 'No critical enhancements available for <code>%s</code>.', $handle ) );
-			return;
-		}
-
-		$object = static::get_asset( $handle, $is_script );
-
-		$enhancement_name = current( $enhancements );
-		$object->extra['enhancements'][ key( $enhancements ) ] = new $enhancement_name( $handle, $is_script, $args );
+		foreach ( $enhancements as $enhancement )
+			if ( static::enhance( $handle, $enhancement, $args, $is_script ) )
+				continue;
 	}
 
 	/**
+	 * @todo define
+	 */
+	function action__self__enhancement_push_pre( $params ) {}
+
+	/**
 	 * Filter: script_loader_tag
+	 *
+	 * Add enhancement to script tag.
 	 *
 	 * @param mixed $tag
 	 * @param string $handle
@@ -205,6 +206,8 @@ final class EnhanceAssets {
 
 	/**
 	 * Filter: style_loader_tag
+	 *
+	 * Add enhancement to style tag.
 	 *
 	 * @param mixed $tag
 	 * @param string $handle

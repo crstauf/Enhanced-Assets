@@ -13,7 +13,8 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 	const KEY = 'push';
 	
 	protected $default_args = array(
-		'push' => true,
+		'header' => true,
+		'link'   => true,
 		'always' => false,
 	);
 
@@ -34,12 +35,15 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 		parent::__construct( $handle, $is_script, $args );
 
 		if ( 
-			$this->args['push']
+			$this->args['header']
 			&& !did_action( 'send_headers' ) 
 		) {
 			add_action( 'send_headers', array( $this, 'action__send_headers' ) );
 			return;
 		}
+
+		if ( !$this->args['link'] )
+			return;
 
 		if ( 
 			     !did_action( 'wp_head' ) 

@@ -178,9 +178,23 @@ final class EnhanceAssets {
 	}
 
 	/**
-	 * @todo define
+	 * Action: enhance_assets/enhancement_push_pre
+	 *
+	 * Magically handle 'push' enhancement.
+	 *
+	 * @param array $params
+	 * @uses static::enhance()
+	 *
+	 * @todo test
 	 */
-	function action__self__enhancement_push_pre( $params ) {}
+	function action__self__enhancement_push_pre( $params ) {
+		list( $handle, $is_script, $args ) = $params;
+
+		$args['header'] = true;
+		$args['link'] = false;
+
+		static::enhance( $handle, 'preload', $args, $is_script );
+	}
 
 	/**
 	 * Filter: script_loader_tag

@@ -1,6 +1,6 @@
 <?php
 /**
- * Enhancement: HTTP2 server push (key: "push").
+ * Enhancement: Preload.
  */
 
 defined( 'ABSPATH' ) || die();
@@ -8,12 +8,12 @@ defined( 'ABSPATH' ) || die();
 /**
  * Class: EnhanceAssets_PushEnhancement
  */
-class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
+class EnhanceAssets_PreloadEnhancement extends EnhanceAssets_Enhancement {
 
-	const KEY = 'push';
-	
+	const KEY = 'preload';
+
 	protected $default_args = array(
-		'header' => true,
+		'header' => false,
 		'link'   => true,
 		'always' => false,
 	);
@@ -34,19 +34,17 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 	function __construct( string $handle, bool $is_script, array $args = array() ) {
 		parent::__construct( $handle, $is_script, $args );
 
-		if ( 
+		if (
 			$this->args['header']
-			&& !did_action( 'send_headers' ) 
+			&& !did_action( 'send_headers' )
 		) {
 			add_action( 'send_headers', array( $this, 'action__send_headers' ) );
 			return;
 		}
 
-		if ( !$this->args['link'] )
-			return;
-
-		if ( 
-			     !did_action( 'wp_head' ) 
+		if (
+			$this->args['link']
+			&&   !did_action( 'wp_head' )
 			&& !doing_action( 'wp_head' )
 		) {
 			add_action( 'wp_head', array( $this, 'action__wp_head' ), 0 );
@@ -67,15 +65,12 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 	 * @return array
 	 */
 	function action__send_headers() {
-		if ( !$this->args['push'] )
-			return;
-			
 		if (
 			   !$this->args['always']
 			&& !$this->is_asset_enqueued()
 		)
 			return;
-			
+
 		$asset = EnhanceAssets::get_asset( $this->handle, $this->is_script );
 
 		# Confirm enhancement is still set.
@@ -91,45 +86,31 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 	/**
 	 * Action: wp_head
 	 *
-	 * Check if already preloaded and still enhanced.
+	 * Maybe add enhancement.
+	 *
+	 * wp_resource_hints() does not yet support "preload",
+	 * so add link tag manually.
+	 *
+	 * @uses EnhanceAssets::get_asset()
+	 * @uses $this->is_asset_enqueued()
+	 * @uses $this->get_asset_url()
 	 */
 	function action__wp_head() {
 		if ( $this->preloaded )
 			return;
 
 		# Confirm enhancement is still set.
-		if ( !isset( $asset->extra['enhancements'][static::KEY] ) )
+		if ( !isset( EnhanceAssets::get_asset( $this->handle )->extra['enhancements'][static::KEY] ) )
 			return;
-		
-		add_filter( 'wp_resource_hints', array( $this, 'filter__wp_resource_hints' ), 10, 2 );
-	}
-	
-	/**
-	 * Filter: wp_resource_hints
-	 *
-	 * Maybe add preload link.
-	 *
-	 * @see wp_resource_hints()
-	 * @param string[] $urls
-	 * @param string $type
-	 * @uses $this->is_asset_enqueued()
-	 * @uses $this->get_asset_url()
-	 * @return string[]
-	 */
-	function filter__wp_resource_hints( $urls, $type ) {
-		if ( 'preload' !== $type )
-			return $urls;
-			
+
 		if (
 			   !$this->args['always']
 			&& !$this->is_asset_enqueued()
 		)
 			return;
-		
-		$urls[] = $this->get_asset_url();
+
+		printf( '<link rel="preload" href="%s" />', esc_attr( esc_url( $this->get_asset_url() ) ) );
 		$this->preloaded = true;
-		
-		return $urls;
 	}
 
 	/**
@@ -142,12 +123,18 @@ class EnhanceAssets_PushEnhancement extends EnhanceAssets_Enhancement {
 		if ( !$this->preloaded )
 			return $tag;
 
-		$tag = str_replace( array( '<script ', '<link ' ), array( '<script pushed ', '<link pushed ' ), $tag );
+		$tag = str_replace( array(
+			'<script ',
+			'<link ',
+		), array(
+			'<script preloaded ',
+			'<link preloaded ',
+		), $tag );
 		return $tag;
 	}
 
 }
 
-EnhanceAssets_Enhancements::add( EnhanceAssets_PushEnhancement::KEY, EnhanceAssets_PushEnhancement::class );
+EnhanceAssets_Enhancements::add( EnhanceAssets_PreloadEnhancement::KEY, EnhanceAssets_PreloadEnhancement::class );
 
 ?>

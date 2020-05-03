@@ -133,6 +133,7 @@ final class EnhanceAssets {
 		$this->includes();
 
 		add_action( 'enhance_assets/enhancement_critical_pre', array( $this, 'action__self__enhancement_critical_pre' ) );
+		add_action( 'enhance_assets/enhancement_push_pre',     array( $this, 'action__self__enhancement_push_pre' ) );
 
 		add_filter( 'script_loader_tag', array( $this, 'filter__script_loader_tag' ), 10, 2 );
 		add_filter(  'style_loader_tag', array( $this,  'filter__style_loader_tag' ), 10, 2 );
@@ -159,8 +160,6 @@ final class EnhanceAssets {
 	 *
 	 * @param array $params
 	 * @uses static::enhance()
-	 *
-	 * @todo test
 	 */
 	function action__self__enhancement_critical_pre( $params ) {
 		list( $handle, $is_script, $args ) = $params;
@@ -174,7 +173,7 @@ final class EnhanceAssets {
 
 		foreach ( $enhancements as $enhancement )
 			if ( static::enhance( $handle, $enhancement, $args, $is_script ) )
-				continue;
+				break;
 	}
 
 	/**

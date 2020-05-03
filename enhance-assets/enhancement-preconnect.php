@@ -69,7 +69,7 @@ class EnhanceAssets_PreconnectEnhancement extends EnhanceAssets_Enhancement {
 		)
 			return $urls;
 
-		$urls[] = $parsed_url['host'];
+		$urls[] = sprintf( '%s://%s', $parsed_url['scheme'], $parsed_url['host'] );
 
 		return $urls;
 	}

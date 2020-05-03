@@ -42,7 +42,7 @@ abstract class EnhanceAssets_Enhancement {
 	 * @uses wp_style_is()
 	 * @return bool
 	 */
-	protected is_asset_enqueued( string $status = 'enqueued' ) {
+	protected function is_asset_enqueued( string $status = 'enqueued' ) {
 		return $this->is_script
 			? wp_script_is( $this->handle, $status )
 			: wp_style_is(  $this->handle, $status );

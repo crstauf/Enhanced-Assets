@@ -3,7 +3,6 @@
  * Manager for enhancements.
  *
  * @todo add "nonce" enhancement
- * @todo create static function to add enhancement
  */
 
 defined( 'ABSPATH' ) || die();

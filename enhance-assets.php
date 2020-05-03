@@ -183,8 +183,6 @@ final class EnhanceAssets {
 	 *
 	 * @param array $params
 	 * @uses static::enhance()
-	 *
-	 * @todo test
 	 */
 	function action__self__enhancement_push_pre( $params ) {
 		list( $handle, $is_script, $args ) = $params;

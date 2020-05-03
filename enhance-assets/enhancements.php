@@ -1,8 +1,6 @@
 <?php
 /**
  * Manager for enhancements.
- *
- * @todo add "nonce" enhancement
  */
 
 defined( 'ABSPATH' ) || die();

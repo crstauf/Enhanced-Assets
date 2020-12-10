@@ -1,6 +1,6 @@
 <?php
 /**
- * Enhancement: add "async" attribute to tag.
+ * Enhancement: add asynchronous loading to tag.
  */
 
 defined( 'ABSPATH' ) || die();
@@ -13,7 +13,7 @@ class EnhanceAssets_AsyncEnhancement extends EnhanceAssets_Enhancement {
 	const KEY = 'async';
 
 	/**
-	 * Add asynchronous functionality to tag.
+	 * Add asynchronous loading to tag.
 	 *
 	 * For scripts, add the "async" attribute.
 	 * For styles, change "media" attribute and add "onload" event.

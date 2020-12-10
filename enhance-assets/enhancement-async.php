@@ -27,7 +27,7 @@ class EnhanceAssets_AsyncEnhancement extends EnhanceAssets_Enhancement {
 			return str_replace( '<script ', '<script async ', $tag );
 			
 		$enhanced = str_replace( 'media=\'all\'', 'media=\'print\' onload="this.media=\'all\'"', $tag );
-		return $enhanced . "\n" . '<noscript>' . $tag . '</noscript>';
+		return $enhanced . '<noscript>' . $tag . '</noscript>';
 	}
 
 }

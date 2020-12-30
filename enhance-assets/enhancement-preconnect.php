@@ -1,6 +1,8 @@
 <?php
 /**
  * Enhancement: add preconnect link.
+ *
+ * @todo add sending via header (https://www.igvita.com/2015/08/17/eliminating-roundtrips-with-preconnect/)
  */
 
 defined( 'ABSPATH' ) || die();

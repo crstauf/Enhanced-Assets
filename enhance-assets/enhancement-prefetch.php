@@ -48,7 +48,7 @@ class EnhanceAssets_PrefetchEnhancement extends EnhanceAssets_Enhancement {
 	 * @uses $this->get_asset_url()
 	 */
 	function action__wp_head() {
-		$asset = EnhanceAssets::get_asset( $this->handle );
+		$asset = EnhanceAssets::get_asset( $this->handle, $this->is_script );
 
 		# Confirm enhancement is still set.
 		if ( !isset( $asset->extra['enhancements'][static::KEY] ) )

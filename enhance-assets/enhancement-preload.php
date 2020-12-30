@@ -13,7 +13,7 @@ class EnhanceAssets_PreloadEnhancement extends EnhanceAssets_Enhancement {
 	const KEY = 'preload';
 
 	protected $default_args = array(
-		'header' => false,
+		'header' => true,
 		'link'   => true,
 		'always' => false,
 	);
@@ -94,13 +94,15 @@ class EnhanceAssets_PreloadEnhancement extends EnhanceAssets_Enhancement {
 	 * @uses EnhanceAssets::get_asset()
 	 * @uses $this->is_asset_enqueued()
 	 * @uses $this->get_asset_url()
+	 *
+	 * @todo add method to not duplicate URLs
 	 */
 	function action__wp_head() {
 		if ( $this->preloaded )
 			return;
 
 		# Confirm enhancement is still set.
-		if ( !isset( EnhanceAssets::get_asset( $this->handle )->extra['enhancements'][static::KEY] ) )
+		if ( !isset( EnhanceAssets::get_asset( $this->handle, $this->is_script )->extra['enhancements'][static::KEY] ) )
 			return;
 
 		if (
@@ -109,7 +111,11 @@ class EnhanceAssets_PreloadEnhancement extends EnhanceAssets_Enhancement {
 		)
 			return;
 
-		printf( '<link rel="preload" href="%s" />', esc_attr( esc_url( $this->get_asset_url() ) ) );
+		printf( '<link rel="preload" href="%s" as="%s" />',
+			esc_attr( esc_url( $this->get_asset_url() ) ),
+			esc_attr( $this->is_script ? 'script' : 'style' )
+		);
+
 		$this->preloaded = true;
 	}
 
